@@ -8,37 +8,32 @@ const path = require("path");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+const YOUR_DOMAIN = "https://matjar-app.vercel.app";
 const allowedOrigins = [
   "http://localhost:5173",
   "https://checkout.stripe.com",
   "https://matjar-app.vercel.app",
 ];
-const YOUR_DOMAIN = "https://matjar-app.vercel.app";
-
-app.use("/",(req,res) => {
-  res.send("Server is Running. ")
-})
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, Stripe webhooks)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
       }
+
+      return callback(new Error("Not allowed by CORS"));
     },
-    credentials: true, // Allow credentials
-    methods: ["GET", "POST", "OPTIONS"], // Allowed methods
+    credentials: true,
+    methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://matjar-app.vercel.app"); // Allow requests from your frontend port
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE"); // Allow specific HTTP methods
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Allow specific headers
-  next();
-});
+
 app.options("*", cors());
 
 app.post("/create-customer", async (req, res) => {
@@ -106,18 +101,14 @@ app.post("/checkout", async (req, res) => {
       },
     });
 
-    res.setHeader(
-      "Access-Control-Allow-Origin",
-      "https://matjar-app.vercel.app"
-    ); // Set to specific origin
     res.setHeader("Access-Control-Allow-Credentials", "true"); // Allow credentials
     res.setHeader(
       "Access-Control-Allow-Methods",
-      "GET, POST, PUT, DELETE, OPTIONS"
+      "GET, POST, PUT, DELETE, OPTIONS",
     ); // Allow methods
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "Content-Type, Authorization"
+      "Content-Type, Authorization",
     ); // Allow headers
     res.status(200).json({ url: session.id });
   } catch (error) {
@@ -135,18 +126,14 @@ app.post("/account/orders/:customerId", async (req, res) => {
     const invoices = await stripe.invoices.list({
       customer: customerId,
     });
-    res.setHeader(
-      "Access-Control-Allow-Origin",
-      "https://matjar-app.vercel.app"
-    ); // Set to specific origin
     res.setHeader("Access-Control-Allow-Credentials", "true"); // Allow credentials
     res.setHeader(
       "Access-Control-Allow-Methods",
-      "GET, POST, PUT, DELETE, OPTIONS"
+      "GET, POST, PUT, DELETE, OPTIONS",
     ); // Allow methods
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "Content-Type, Authorization"
+      "Content-Type, Authorization",
     ); // Allow headers
     res.json(invoices);
   } catch (error) {
@@ -184,3 +171,4 @@ app.get("/api/orders", async (req, res) => {
 });
 
 app.listen(4242, () => console.log("Running on port 4242"));
+
