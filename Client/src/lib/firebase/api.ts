@@ -429,7 +429,7 @@ export async function createCustomerStripe(customer: {
 }) {
   try {
     const res = await fetch(
-      "https://matjarapp-production.up.railway.app/create-customer",
+      "https://stripe-server-matjar.vercel.app/create-customer",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -448,7 +448,7 @@ export async function createCustomerStripe(customer: {
 export async function getCustomerStripe(email: string) {
   try {
     const res = await fetch(
-      "https://matjarapp-production.up.railway.app/find-customer",
+      "https://stripe-server-matjar.vercel.app/find-customer",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -467,7 +467,7 @@ export async function getCustomerStripe(email: string) {
 export async function getOrdersCustomer(customerId: string) {
   try {
     const res = await fetch(
-      `https://matjarapp-production.up.railway.app/account/orders/${customerId}`,
+      `https://stripe-server-matjar.vercel.app/account/orders/${customerId}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -484,7 +484,7 @@ export async function getOrdersCustomer(customerId: string) {
 export async function getSessionData(sessionId: string) {
   try {
     const res = await fetch(
-      `https://matjarapp-production.up.railway.app/session/${sessionId}`,
+      `https://stripe-server-matjar.vercel.app/session/${sessionId}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
