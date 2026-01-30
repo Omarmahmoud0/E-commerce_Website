@@ -15,6 +15,10 @@ const allowedOrigins = [
 ];
 const YOUR_DOMAIN = "https://matjar-app.vercel.app";
 
+app.use("/",(req,res) => {
+  res.send("Server is Running. ")
+})
+
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -162,6 +166,20 @@ app.post("/session/:sessionId", async (req, res) => {
   } catch (error) {
     console.error("Error fetching session:", error);
     res.status(500).json({ error: "Failed to fetch session data" });
+  }
+});
+
+// API Endpoint لجلب جميع المدفوعات (الطلبات)
+app.get("/api/orders", async (req, res) => {
+  try {
+    const paymentIntents = await stripe.paymentIntents.list({
+      limit: 100,
+    });
+
+    res.status(200).json(paymentIntents.data);
+  } catch (error) {
+    console.error("Error fetching payment intents:", error);
+    res.status(500).json({ error: "Failed to fetch payments." });
   }
 });
 
